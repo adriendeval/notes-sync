@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "P2P Notes Sync",
+  "description": "A peer-to-peer shared notepad synced over WebRTC DataChannels.",
+  "version": "1.0.0",
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "P2P Notes Sync",
+    "default_popup": "popup.html"
+  }
+}
