@@ -1,4 +1,5 @@
 const STORAGE_KEY = "p2p-notes-sync-state";
+const SYNC_DEBOUNCE_MS = 60;
 const state = { noteText: "", tasks: [] };
 
 let pc = null;
@@ -76,7 +77,7 @@ function queueSync() {
   syncTimer = setTimeout(() => {
     saveState();
     broadcastState();
-  }, 60);
+  }, SYNC_DEBOUNCE_MS);
 }
 
 function updateStateFromUi() {
@@ -94,7 +95,8 @@ function renderTasks() {
     return;
   }
 
-  state.tasks.forEach((task, index) => {
+  state.tasks.forEach((task) => {
+    const taskId = task.id;
     const item = document.createElement("li");
     item.className = "flex items-center gap-2";
 
@@ -103,7 +105,11 @@ function renderTasks() {
     checkbox.checked = task.done;
     checkbox.className = "h-4 w-4 rounded border-blue-300 text-emerald-600 focus:ring-emerald-300";
     checkbox.addEventListener("change", () => {
-      state.tasks[index].done = checkbox.checked;
+      const nextTask = state.tasks.find((stateTask) => stateTask.id === taskId);
+      if (!nextTask) {
+        return;
+      }
+      nextTask.done = checkbox.checked;
       queueSync();
     });
 
@@ -113,7 +119,11 @@ function renderTasks() {
     text.placeholder = "Task details";
     text.className = "flex-1 rounded-md border border-blue-200 p-1.5 text-xs focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200";
     text.addEventListener("input", () => {
-      state.tasks[index].text = text.value;
+      const nextTask = state.tasks.find((stateTask) => stateTask.id === taskId);
+      if (!nextTask) {
+        return;
+      }
+      nextTask.text = text.value;
       queueSync();
     });
 
@@ -121,7 +131,7 @@ function renderTasks() {
     remove.textContent = "✕";
     remove.className = "rounded-md bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-200";
     remove.addEventListener("click", () => {
-      state.tasks.splice(index, 1);
+      state.tasks = state.tasks.filter((stateTask) => stateTask.id !== taskId);
       renderTasks();
       queueSync();
     });
