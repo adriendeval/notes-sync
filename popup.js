@@ -283,15 +283,24 @@ function bindUi() {
   });
 
   createOfferBtn.addEventListener("click", () => {
-    createOffer().catch(() => setStatus("Failed to create offer."));
+    createOffer().catch((error) => {
+      console.error(error);
+      setStatus("Failed to create offer.");
+    });
   });
 
   createAnswerBtn.addEventListener("click", () => {
-    createAnswer().catch(() => setStatus("Failed to create answer."));
+    createAnswer().catch((error) => {
+      console.error(error);
+      setStatus("Failed to create answer.");
+    });
   });
 
   applySignalBtn.addEventListener("click", () => {
-    applySignal().catch(() => setStatus("Failed to apply signal."));
+    applySignal().catch((error) => {
+      console.error(error);
+      setStatus("Failed to apply signal.");
+    });
   });
 }
 
